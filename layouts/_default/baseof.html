@@ -14,7 +14,13 @@
   <div class="progress-bar" id="progress"></div>
   <header class="site-header">
     <div class="wrap header-inner">
-      <a class="brand" href="/">{{ .Site.Title }}</a>
+      <a class="brand" href="/">
+        <span class="brand-name">
+          {{ .Site.Title }}
+          <span class="brand-badge">技术博客</span>
+        </span>
+        {{ with .Site.Params.tagline }}<span class="brand-tagline">{{ . }}</span>{{ end }}
+      </a>
       <div class="header-right">
         <nav class="nav">
           {{ range .Site.Menus.main }}
