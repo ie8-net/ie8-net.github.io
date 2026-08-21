@@ -1,11 +1,44 @@
 {{ define "main" }}
+
+{{ $tags := .Site.Taxonomies.tags.ByCount }}
+{{ $cats := .Site.Taxonomies.categories.ByCount }}
+
 <section class="hero">
+  <span class="chip hero-badge">技术博客</span>
   <h1>{{ .Site.Title }}</h1>
-  <p>{{ .Site.Params.description }}</p>
+  <p class="hero-sub">{{ .Site.Params.description }}</p>
+  {{ with .Site.Params.tagline }}<p class="hero-tagline">{{ . }}</p>{{ end }}
+  <div class="hero-links">
+    {{ with .Site.Params.github }}<a href="{{ . }}" target="_blank" rel="noopener" class="hero-link">GitHub</a>{{ end }}
+    <a href="/index.xml" class="hero-link">RSS 订阅</a>
+    <a href="/search/" class="hero-link">搜索</a>
+  </div>
 </section>
 
-<section>
-  <h2>最新文章</h2>
+{{ if $tags }}
+<section class="home-section">
+  <h2 class="section-title">热门标签</h2>
+  <div class="tags">
+    {{ range first 14 $tags }}
+      <a class="chip" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="chip-count">{{ .Count }}</span></a>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+{{ if $cats }}
+<section class="home-section">
+  <h2 class="section-title">分类</h2>
+  <div class="cat-row">
+    {{ range $cats }}
+      <a class="cat-link" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="cat-count">{{ .Count }}</span></a>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<section class="home-section">
+  <h2 class="section-title">最新文章</h2>
   <div class="post-list">
     {{ $posts := where .Site.RegularPages "Section" "posts" }}
     {{ range $posts.ByDate.Reverse | first 8 }}
@@ -13,9 +46,15 @@
         <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
         <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读{{ with .Params.categories }} · {{ delimit . " / " }}{{ end }}</p>
         <p>{{ .Summary | plainify | truncate 120 }}</p>
+        {{ with .Params.tags }}
+        <div class="tags card-tags">
+          {{ range first 4 . }}<a class="chip" href="/tags/{{ . | urlize }}/">{{ . }}</a>{{ end }}
+        </div>
+        {{ end }}
       </article>
     {{ end }}
   </div>
   <p style="margin-top:1.2em"><a href="/posts/" style="color:var(--brand)">查看全部文章 →</a></p>
 </section>
+
 {{ end }}

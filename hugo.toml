@@ -8,7 +8,9 @@ defaultContentLanguage = "zh"
 
 [params]
   description = "专注工程实践、自动化与开发效率的技术博客。"
+  tagline = "写代码、搞自动化、踩坑填坑——一个中年程序员把折腾过程记下来。"
   author = "打滚的驴"
+  github = "https://github.com/ie8-net/ie8-net.github.io"
 
 [taxonomies]
   tag = "tags"
