@@ -31,6 +31,9 @@ fetch('/searchindex.json').then(function(r){return r.json();}).then(function(dat
     }).join('');
   }
   q.addEventListener('input',function(e){go(e.target.value);});
+  var params=new URLSearchParams(location.search);
+  var preset=params.get('q');
+  if(preset){q.value=preset;go(preset);}
 }).catch(function(){
   var e=document.getElementById('empty');
   e.textContent='搜索索引加载失败。';

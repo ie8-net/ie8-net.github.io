@@ -1,0 +1,20 @@
+{{ define "main" }}
+<section>
+  <h1>归档</h1>
+  <p class="meta">全部文章按年份归档，点击标题直接阅读。</p>
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+  {{ range ($posts.GroupByDate "2006").Reverse }}
+  <div class="archive-year" id="{{ .Key }}">
+    <h2 class="section-title">{{ .Key }} <span class="cat-count">{{ len .Pages }} 篇</span></h2>
+    <ul class="archive-list">
+      {{ range .Pages.ByDate.Reverse }}
+      <li>
+        <span class="meta">{{ .Date.Format "01-02" }}</span>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+  {{ end }}
+</section>
+{{ end }}

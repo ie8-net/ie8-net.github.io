@@ -15,6 +15,13 @@
   </div>
 </section>
 
+<section class="home-section">
+  <form class="home-search" action="/search/" method="get" role="search">
+    <input class="search-box" type="search" name="q" placeholder="搜索文章、标签或正文…" aria-label="搜索文章">
+    <button class="search-btn" type="submit">搜索</button>
+  </form>
+</section>
+
 {{ if $tags }}
 <section class="home-section">
   <h2 class="section-title">热门标签</h2>
@@ -31,11 +38,21 @@
   <h2 class="section-title">分类</h2>
   <div class="cat-row">
     {{ range $cats }}
-      <a class="cat-link" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="cat-count">{{ .Count }}</span></a>
+      <a class="cat-link" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="cat-count">{{ .Count }}</span>      </a>
     {{ end }}
   </div>
 </section>
 {{ end }}
+
+<section class="home-section">
+  <h2 class="section-title">归档</h2>
+  <div class="archive-row">
+    {{ $posts := where .Site.RegularPages "Section" "posts" }}
+    {{ range ($posts.GroupByDate "2006").Reverse }}
+      <a class="archive-link" href="/archive/#{{ .Key }}">{{ .Key }} <span class="cat-count">{{ len .Pages }} 篇</span></a>
+    {{ end }}
+  </div>
+</section>
 
 <section class="home-section">
   <h2 class="section-title">最新文章</h2>

@@ -11,6 +11,7 @@
   <meta name="theme-color" content="#0f766e">
 </head>
 <body>
+  <div class="progress-bar" id="progress"></div>
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="/">{{ .Site.Title }}</a>
@@ -32,6 +33,7 @@
       <p>© {{ now.Year }} {{ .Site.Params.author }} · <a href="/index.xml">RSS 订阅</a> · Powered by Hugo</p>
     </div>
   </footer>
+  <button id="to-top" class="to-top" type="button" aria-label="回到顶部">↑ 顶部</button>
   <script>
   (function(){
     var root=document.documentElement;
@@ -65,6 +67,50 @@
       });
       pre.appendChild(b);
     });
+  })();
+
+  (function(){
+    var bar=document.getElementById('progress');
+    var top=document.getElementById('to-top');
+    function onScroll(){
+      var h=document.documentElement;
+      var max=h.scrollHeight-h.clientHeight;
+      var pct=max>0?(h.scrollTop/max)*100:0;
+      if(bar){bar.style.width=pct+'%';}
+      if(top){top.classList.toggle('show',h.scrollTop>400);}
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+    onScroll();
+    if(top){
+      top.addEventListener('click',function(){
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+    }
+  })();
+
+  (function(){
+    var toc=document.querySelector('.toc');
+    if(!toc)return;
+    var links=toc.querySelectorAll('a[href^="#"]');
+    if(!links.length)return;
+    var map={};
+    links.forEach(function(a){
+      var id=a.getAttribute('href').slice(1);
+      if(id)map[id]=a;
+    });
+    var targets=Object.keys(map).map(function(id){return document.getElementById(id);}).filter(Boolean);
+    if(!targets.length)return;
+    var current=null;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          if(current){current.classList.remove('active');}
+          current=map[e.target.id];
+          if(current){current.classList.add('active');}
+        }
+      });
+    },{rootMargin:'-80px 0px -70% 0px',threshold:0});
+    targets.forEach(function(t){io.observe(t);});
   })();
   </script>
 </body>
