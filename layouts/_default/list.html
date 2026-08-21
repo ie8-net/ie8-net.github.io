@@ -1,28 +1,34 @@
 {{ define "main" }}
-<section>
-  <h1>{{ .Title }}</h1>
-  {{ $pag := .Paginate .Pages }}
-  <div class="post-list">
-    {{ range $pag.Pages }}
-      <article class="post-card">
-        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-        <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读{{ with .Params.categories }} · {{ delimit . " / " }}{{ end }}</p>
-        <p>{{ .Summary | plainify | truncate 120 }}</p>
-        {{ with .Params.tags }}<div class="tags">{{ range . }}<a class="chip" href="/tags/{{ urlize . }}/">{{ . }}</a>{{ end }}</div>{{ end }}
-      </article>
-    {{ else }}
-      <p>当前列表暂无内容。</p>
-    {{ end }}
+<div class="page-grid">
+  <div class="page-main">
+    <section>
+      <h1>{{ .Title }}</h1>
+      {{ $pag := .Paginate .Pages }}
+      <div class="post-list">
+        {{ range $pag.Pages }}
+          <article class="post-card">
+            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+            <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读{{ with .Params.categories }} · {{ delimit . " / " }}{{ end }}</p>
+            <p>{{ .Summary | plainify | truncate 120 }}</p>
+            {{ with .Params.tags }}<div class="tags">{{ range . }}<a class="chip" href="/tags/{{ urlize . }}/">{{ . }}</a>{{ end }}</div>{{ end }}
+          </article>
+        {{ else }}
+          <p>当前列表暂无内容。</p>
+        {{ end }}
+      </div>
+
+      {{ if gt $pag.TotalPages 1 }}
+      <nav class="pagination" role="navigation" aria-label="分页">
+        {{ if $pag.HasPrev }}<a href="{{ $pag.Prev.URL }}">← 上一页</a>{{ else }}<span class="disabled">← 上一页</span>{{ end }}
+        {{ range $pag.Pagers }}
+          {{ if eq .PageNumber $pag.PageNumber }}<span class="current">{{ .PageNumber }}</span>{{ else }}<a href="{{ .URL }}">{{ .PageNumber }}</a>{{ end }}
+        {{ end }}
+        {{ if $pag.HasNext }}<a href="{{ $pag.Next.URL }}">下一页 →</a>{{ else }}<span class="disabled">下一页 →</span>{{ end }}
+      </nav>
+      {{ end }}
+    </section>
   </div>
 
-  {{ if gt $pag.TotalPages 1 }}
-  <nav class="pagination" role="navigation" aria-label="分页">
-    {{ if $pag.HasPrev }}<a href="{{ $pag.Prev.URL }}">← 上一页</a>{{ else }}<span class="disabled">← 上一页</span>{{ end }}
-    {{ range $pag.Pagers }}
-      {{ if eq .PageNumber $pag.PageNumber }}<span class="current">{{ .PageNumber }}</span>{{ else }}<a href="{{ .URL }}">{{ .PageNumber }}</a>{{ end }}
-    {{ end }}
-    {{ if $pag.HasNext }}<a href="{{ $pag.Next.URL }}">下一页 →</a>{{ else }}<span class="disabled">下一页 →</span>{{ end }}
-  </nav>
-  {{ end }}
-</section>
+  {{ partial "sidebar.html" . }}
+</div>
 {{ end }}

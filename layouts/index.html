@@ -1,77 +1,40 @@
 {{ define "main" }}
 
-{{ $tags := .Site.Taxonomies.tags.ByCount }}
-{{ $cats := .Site.Taxonomies.categories.ByCount }}
+{{ $posts := where .Site.RegularPages "Section" "posts" }}
 
-<section class="hero">
-  <span class="chip hero-badge">技术博客</span>
-  <h1>{{ .Site.Title }}</h1>
-  <p class="hero-sub">{{ .Site.Params.description }}</p>
-  {{ with .Site.Params.tagline }}<p class="hero-tagline">{{ . }}</p>{{ end }}
-  <div class="hero-links">
-    {{ with .Site.Params.github }}<a href="{{ . }}" target="_blank" rel="noopener" class="hero-link">GitHub</a>{{ end }}
-    <a href="/index.xml" class="hero-link">RSS 订阅</a>
-    <a href="/search/" class="hero-link">搜索</a>
-  </div>
-</section>
+<div class="page-grid">
+  <div class="page-main">
 
-<section class="home-section">
-  <form class="home-search" action="/search/" method="get" role="search">
-    <input class="search-box" type="search" name="q" placeholder="搜索文章、标签或正文…" aria-label="搜索文章">
-    <button class="search-btn" type="submit">搜索</button>
-  </form>
-</section>
+    <section class="hero">
+      <span class="chip hero-badge">技术博客</span>
+      <h1>{{ .Site.Title }}</h1>
+      <p class="hero-sub">{{ .Site.Params.description }}</p>
+      {{ with .Site.Params.tagline }}<p class="hero-tagline">{{ . }}</p>{{ end }}
+    </section>
 
-{{ if $tags }}
-<section class="home-section">
-  <h2 class="section-title">热门标签</h2>
-  <div class="tags">
-    {{ range first 14 $tags }}
-      <a class="chip" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="chip-count">{{ .Count }}</span></a>
-    {{ end }}
-  </div>
-</section>
-{{ end }}
-
-{{ if $cats }}
-<section class="home-section">
-  <h2 class="section-title">分类</h2>
-  <div class="cat-row">
-    {{ range $cats }}
-      <a class="cat-link" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="cat-count">{{ .Count }}</span>      </a>
-    {{ end }}
-  </div>
-</section>
-{{ end }}
-
-<section class="home-section">
-  <h2 class="section-title">归档</h2>
-  <div class="archive-row">
-    {{ $posts := where .Site.RegularPages "Section" "posts" }}
-    {{ range ($posts.GroupByDate "2006").Reverse }}
-      <a class="archive-link" href="/archive/#{{ .Key }}">{{ .Key }} <span class="cat-count">{{ len .Pages }} 篇</span></a>
-    {{ end }}
-  </div>
-</section>
-
-<section class="home-section">
-  <h2 class="section-title">最新文章</h2>
-  <div class="post-list">
-    {{ $posts := where .Site.RegularPages "Section" "posts" }}
-    {{ range $posts.ByDate.Reverse | first 8 }}
-      <article class="post-card">
-        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读{{ with .Params.categories }} · {{ delimit . " / " }}{{ end }}</p>
-        <p>{{ .Summary | plainify | truncate 120 }}</p>
-        {{ with .Params.tags }}
-        <div class="tags card-tags">
-          {{ range first 4 . }}<a class="chip" href="/tags/{{ . | urlize }}/">{{ . }}</a>{{ end }}
-        </div>
+    <section class="home-section">
+      <h2 class="section-title">最新文章</h2>
+      <div class="post-list">
+        {{ range $posts.ByDate.Reverse | first 8 }}
+          <article class="post-card">
+            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读{{ with .Params.categories }} · {{ delimit . " / " }}{{ end }}</p>
+            <p>{{ .Summary | plainify | truncate 120 }}</p>
+            {{ with .Params.tags }}
+            <div class="tags card-tags">
+              {{ range first 4 . }}<a class="chip" href="/tags/{{ . | urlize }}/">{{ . }}</a>{{ end }}
+            </div>
+            {{ end }}
+          </article>
         {{ end }}
-      </article>
-    {{ end }}
+      </div>
+      <p style="margin-top:1.2em"><a href="/posts/" style="color:var(--brand)">查看全部文章 →</a></p>
+    </section>
+
   </div>
-  <p style="margin-top:1.2em"><a href="/posts/" style="color:var(--brand)">查看全部文章 →</a></p>
-</section>
+
+  {{ partial "sidebar.html" . }}
+
+</div>
 
 {{ end }}

@@ -461,6 +461,84 @@ body {
   }
 }
 
+/* ===== 列表页两栏布局（首页 / posts / term） ===== */
+.page-grid {
+  display: grid;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .page-grid {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 28px;
+  }
+  .page-sidebar {
+    position: sticky;
+    top: 80px;
+  }
+}
+
+.page-main {
+  min-width: 0;
+}
+
+.page-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-block {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.sidebar-block .section-title {
+  font-size: 1rem;
+  margin: 0 0 .8em;
+}
+
+.sidebar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sidebar-cats,
+.sidebar-archive {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sidebar-links a {
+  font-size: .9rem;
+  color: var(--brand);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  padding: .35em .9em;
+  border-radius: 8px;
+  transition: border-color .15s, color .15s;
+}
+
+.sidebar-links a:hover {
+  border-color: var(--brand);
+}
+
+@media (max-width: 1023.98px) {
+  .page-sidebar {
+    margin-top: 1.5em;
+  }
+}
+
 /* ===== 相关文章 ===== */
 .related {
   margin-top: 2.5em;

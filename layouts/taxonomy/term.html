@@ -1,15 +1,21 @@
 {{ define "main" }}
-<section>
-  <h1>{{ .Title }}</h1>
-  <p class="meta">{{ .Data.Pages.Len }} 篇文章</p>
-  <div class="post-list">
-    {{ range .Pages }}
-      <article class="post-card">
-        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读</p>
-        <p>{{ .Summary | plainify | truncate 120 }}</p>
-      </article>
-    {{ end }}
+<div class="page-grid">
+  <div class="page-main">
+    <section>
+      <h1>{{ .Title }}</h1>
+      <p class="meta">{{ .Data.Pages.Len }} 篇文章</p>
+      <div class="post-list">
+        {{ range .Pages }}
+          <article class="post-card">
+            <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读</p>
+            <p>{{ .Summary | plainify | truncate 120 }}</p>
+          </article>
+        {{ end }}
+      </div>
+    </section>
   </div>
-</section>
+
+  {{ partial "sidebar.html" . }}
+</div>
 {{ end }}
