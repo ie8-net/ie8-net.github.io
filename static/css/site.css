@@ -260,8 +260,8 @@ body {
 
 .post-content pre {
   overflow-x: auto;
-  background: #0b1324;
-  color: #e5e7eb;
+  background: #0b1324 !important;
+  color: #e5e7eb !important;
   padding: 12px;
   border-radius: 8px;
 }
@@ -412,12 +412,131 @@ body {
   color: var(--muted);
 }
 
+/* ===== 主题切换按钮 ===== */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-toggle {
+  font: inherit;
+  font-size: .9rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.theme-toggle:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* ===== 搜索 ===== */
+.search-box {
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  margin: 1em 0 1.5em;
+}
+
+.search-box:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+/* ===== 代码块复制按钮 ===== */
+.post-content pre {
+  position: relative;
+  padding-top: 14px;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font: inherit;
+  font-size: .78rem;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .4);
+}
+
+/* ===== 深色模式 ===== */
+[data-theme="dark"] {
+  --bg: #0d1117;
+  --card: #161b22;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --line: #30363d;
+  --brand: #2dd4bf;
+}
+
+[data-theme="dark"] .post-content :not(pre) > code {
+  background: #21262d;
+  color: #ff7b72;
+}
+
+[data-theme="dark"] .chip {
+  background: #11271f;
+  border-color: #1d4034;
+}
+
+[data-theme="dark"] .post-content blockquote,
+[data-theme="dark"] .post-content th {
+  background: #161b22;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0d1117;
+    --card: #161b22;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --line: #30363d;
+    --brand: #2dd4bf;
+  }
+  :root:not([data-theme]) .post-content :not(pre) > code {
+    background: #21262d;
+    color: #ff7b72;
+  }
+  :root:not([data-theme]) .chip {
+    background: #11271f;
+    border-color: #1d4034;
+  }
+  :root:not([data-theme]) .post-content blockquote,
+  :root:not([data-theme]) .post-content th {
+    background: #161b22;
+  }
+}
+
 /* ===== 响应式 ===== */
 @media (max-width: 600px) {
   .header-inner {
     flex-direction: column;
     gap: 6px;
     padding: 10px 0;
+  }
+  .header-right {
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .nav a {
     margin: 0 9px;

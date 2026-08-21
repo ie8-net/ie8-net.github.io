@@ -31,3 +31,27 @@ defaultContentLanguage = "zh"
     name = "分类"
     url = "/categories/"
     weight = 4
+  [[menu.main]]
+    name = "搜索"
+    url = "/search/"
+    weight = 5
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+  [markup.highlight]
+    noClasses = true
+    style = "monokai"
+    guessSyntax = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[outputFormats.JSON]
+  mediaType = "application/json"
+  baseName = "searchindex"
+
+[mediaTypes]
+  [mediaTypes."application/json"]
+    suffixes = ["json"]

@@ -14,11 +14,14 @@
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="/">{{ .Site.Title }}</a>
-      <nav class="nav">
-        {{ range .Site.Menus.main }}
-          <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} class="active"{{ end }}>{{ .Name }}</a>
-        {{ end }}
-      </nav>
+      <div class="header-right">
+        <nav class="nav">
+          {{ range .Site.Menus.main }}
+            <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} class="active"{{ end }}>{{ .Name }}</a>
+          {{ end }}
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换深浅色">深色</button>
+      </div>
     </div>
   </header>
   <main class="wrap">
@@ -29,5 +32,40 @@
       <p>© {{ now.Year }} {{ .Site.Params.author }} · <a href="/index.xml">RSS 订阅</a> · Powered by Hugo</p>
     </div>
   </footer>
+  <script>
+  (function(){
+    var root=document.documentElement;
+    var saved=localStorage.getItem('theme');
+    if(saved==='dark'||saved==='light'){root.setAttribute('data-theme',saved);}
+    var btn=document.getElementById('theme-toggle');
+    if(!btn)return;
+    function sync(){
+      var cur=root.getAttribute('data-theme');
+      var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var isDark=(cur==='dark')||(!cur&&prefersDark);
+      btn.textContent=isDark?'浅色':'深色';
+    }
+    sync();
+    btn.addEventListener('click',function(){
+      var cur=root.getAttribute('data-theme');
+      var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var isDark=(cur==='dark')||(!cur&&prefersDark);
+      var next=isDark?'light':'dark';
+      root.setAttribute('data-theme',next);
+      localStorage.setItem('theme',next);
+      sync();
+    });
+    document.querySelectorAll('.post-content pre').forEach(function(pre){
+      var b=document.createElement('button');
+      b.className='copy-btn';b.type='button';b.textContent='复制';
+      b.addEventListener('click',function(){
+        navigator.clipboard.writeText(pre.innerText).then(function(){
+          b.textContent='已复制';setTimeout(function(){b.textContent='复制';},1200);
+        });
+      });
+      pre.appendChild(b);
+    });
+  })();
+  </script>
 </body>
 </html>

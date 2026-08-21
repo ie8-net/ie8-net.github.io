@@ -11,7 +11,7 @@
     {{ range $posts.ByDate.Reverse | first 8 }}
       <article class="post-card">
         <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读</p>
+        <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读{{ with .Params.categories }} · {{ delimit . " / " }}{{ end }}</p>
         <p>{{ .Summary | plainify | truncate 120 }}</p>
       </article>
     {{ end }}

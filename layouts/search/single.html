@@ -1,0 +1,40 @@
+{{ define "main" }}
+<section>
+  <h1>搜索</h1>
+  <p class="meta">输入关键词，匹配标题、摘要、标签与正文。</p>
+  <input id="q" class="search-box" type="search" placeholder="例如：Hugo、AI、前端…" autofocus>
+  <div id="results" class="post-list"></div>
+  <p id="empty" class="meta" style="display:none">没有匹配的结果。</p>
+</section>
+<script>
+fetch('/searchindex.json').then(function(r){return r.json();}).then(function(data){
+  var q=document.getElementById('q');
+  var box=document.getElementById('results');
+  var empty=document.getElementById('empty');
+  var posts=data.posts||[];
+  function go(term){
+    term=(term||'').trim().toLowerCase();
+    if(!term){box.innerHTML='';empty.style.display='none';return;}
+    var hit=posts.filter(function(p){
+      return (p.title||'').toLowerCase().indexOf(term)>-1
+        || (p.summary||'').toLowerCase().indexOf(term)>-1
+        || (p.content||'').toLowerCase().indexOf(term)>-1
+        || (p.tags||[]).join(' ').toLowerCase().indexOf(term)>-1
+        || (p.categories||[]).join(' ').toLowerCase().indexOf(term)>-1;
+    });
+    if(!hit.length){box.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    box.innerHTML=hit.map(function(p){
+      var s=(p.summary||'');
+      s=s.length>120?s.slice(0,120)+'…':s;
+      return '<article class="post-card"><h3><a href="'+p.url+'">'+p.title+'</a></h3><p class="meta">'+p.date+'</p><p>'+s+'</p></article>';
+    }).join('');
+  }
+  q.addEventListener('input',function(e){go(e.target.value);});
+}).catch(function(){
+  var e=document.getElementById('empty');
+  e.textContent='搜索索引加载失败。';
+  e.style.display='block';
+});
+</script>
+{{ end }}
