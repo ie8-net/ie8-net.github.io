@@ -430,12 +430,34 @@ body {
   font-weight: 600;
 }
 
-@media (min-width: 768px) {
-  .toc {
+.post-wrap {
+  display: grid;
+}
+
+@media (min-width: 1024px) {
+  .post-wrap {
+    grid-template-columns: 1fr 220px;
+    gap: 28px;
+    align-items: start;
+  }
+  .post-wrap > article:only-child {
+    grid-column: 1 / -1;
+  }
+  .toc-side {
     position: sticky;
     top: 80px;
+  }
+  .toc-side .toc {
+    margin: 0;
     max-height: calc(100vh - 100px);
     overflow: auto;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .toc-side {
+    order: -1;
+    margin: 1.5em 0 0;
   }
 }
 

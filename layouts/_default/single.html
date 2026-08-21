@@ -1,58 +1,62 @@
 {{ define "main" }}
-<article class="post">
-  <header>
-    <h1>{{ .Title }}</h1>
-    <div class="post-meta">
-      <span>{{ .Date.Format "2006-01-02" }}</span>
-      <span class="sep">·</span>
-      <span>{{ .ReadingTime }} 分钟阅读</span>
-      {{ with .Params.categories }}<span class="sep">·</span><span>分类：{{ delimit . " / " }}</span>{{ end }}
+<div class="post-wrap">
+  <article class="post">
+    <header>
+      <h1>{{ .Title }}</h1>
+      <div class="post-meta">
+        <span>{{ .Date.Format "2006-01-02" }}</span>
+        <span class="sep">·</span>
+        <span>{{ .ReadingTime }} 分钟阅读</span>
+        {{ with .Params.categories }}<span class="sep">·</span><span>分类：{{ delimit . " / " }}</span>{{ end }}
+      </div>
+      {{ with .Params.tags }}
+      <div class="tags">
+        {{ range . }}<a class="chip" href="/tags/{{ urlize . }}/">{{ . }}</a>{{ end }}
+      </div>
+      {{ end }}
+    </header>
+
+    <div class="post-content">
+      {{ .Content }}
     </div>
-    {{ with .Params.tags }}
-    <div class="tags">
-      {{ range . }}<a class="chip" href="/tags/{{ urlize . }}/">{{ . }}</a>{{ end }}
-    </div>
+
+    <nav class="post-nav">
+      {{ with .PrevInSection }}<a class="prev" href="{{ .RelPermalink }}"><span class="label">← 上一篇</span>{{ .Title }}</a>{{ end }}
+      {{ with .NextInSection }}<a class="next" href="{{ .RelPermalink }}"><span class="label">下一篇 →</span>{{ .Title }}</a>{{ end }}
+    </nav>
+
+    {{ $current := . }}
+    {{ $myTags := .Params.tags | default slice }}
+    {{ $related := slice }}
+    {{ range where .Site.RegularPages "Section" "posts" }}
+      {{ if and (ne .Permalink $current.Permalink) (gt (len (intersect .Params.tags $myTags)) 0) }}
+        {{ $related = $related | append . }}
+      {{ end }}
     {{ end }}
-  </header>
+    {{ $related = sort $related "Date" "desc" | first 4 }}
+    {{ with $related }}
+    <section class="related">
+      <h2 class="section-title">相关文章</h2>
+      <div class="post-list">
+        {{ range . }}
+        <article class="post-card">
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读</p>
+          <p>{{ .Summary | plainify | truncate 100 }}</p>
+        </article>
+        {{ end }}
+      </div>
+    </section>
+    {{ end }}
+  </article>
 
   {{ if .TableOfContents }}
-  <details class="toc" open>
-    <summary>目录</summary>
-    {{ .TableOfContents }}
-  </details>
+  <aside class="toc-side">
+    <details class="toc" open>
+      <summary>目录</summary>
+      {{ .TableOfContents }}
+    </details>
+  </aside>
   {{ end }}
-
-  <div class="post-content">
-    {{ .Content }}
-  </div>
-
-  <nav class="post-nav">
-    {{ with .PrevInSection }}<a class="prev" href="{{ .RelPermalink }}"><span class="label">← 上一篇</span>{{ .Title }}</a>{{ end }}
-    {{ with .NextInSection }}<a class="next" href="{{ .RelPermalink }}"><span class="label">下一篇 →</span>{{ .Title }}</a>{{ end }}
-  </nav>
-
-  {{ $current := . }}
-  {{ $myTags := .Params.tags | default slice }}
-  {{ $related := slice }}
-  {{ range where .Site.RegularPages "Section" "posts" }}
-    {{ if and (ne .Permalink $current.Permalink) (gt (len (intersect .Params.tags $myTags)) 0) }}
-      {{ $related = $related | append . }}
-    {{ end }}
-  {{ end }}
-  {{ $related = sort $related "Date" "desc" | first 4 }}
-  {{ with $related }}
-  <section class="related">
-    <h2 class="section-title">相关文章</h2>
-    <div class="post-list">
-      {{ range . }}
-      <article class="post-card">
-        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读</p>
-        <p>{{ .Summary | plainify | truncate 100 }}</p>
-      </article>
-      {{ end }}
-    </div>
-  </section>
-  {{ end }}
-</article>
+</div>
 {{ end }}
