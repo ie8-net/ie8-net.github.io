@@ -1,14 +1,9 @@
 {{ define "main" }}
-<section class="hero">
-  <h1>{{ .Site.Title }}</h1>
-  <p>{{ .Site.Params.description }}</p>
-</section>
-
 <section>
-  <h2>最新文章</h2>
+  <h1>{{ .Title }}</h1>
+  <p class="meta">{{ .Data.Pages.Len }} 篇文章</p>
   <div class="post-list">
-    {{ $posts := where .Site.RegularPages "Section" "posts" }}
-    {{ range $posts.ByDate.Reverse | first 8 }}
+    {{ range .Pages }}
       <article class="post-card">
         <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
         <p class="meta">{{ .Date.Format "2006-01-02" }} · {{ .ReadingTime }} 分钟阅读</p>
@@ -16,6 +11,5 @@
       </article>
     {{ end }}
   </div>
-  <p style="margin-top:1.2em"><a href="/posts/" style="color:var(--brand)">查看全部文章 →</a></p>
 </section>
 {{ end }}

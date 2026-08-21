@@ -1,0 +1,5 @@
+# 本地 Hugo 二进制（仅用于本地校验，不入库）
+.hugo-bin/
+
+# Hugo 构建缓存
+resources/_gen/

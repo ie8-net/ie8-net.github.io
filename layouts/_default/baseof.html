@@ -6,6 +6,9 @@
   <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} · {{ .Site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
   <link rel="stylesheet" href="/css/site.css">
+  {{ with .OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .RelPermalink }}">{{ end }}
+  <link rel="sitemap" href="/sitemap.xml">
+  <meta name="theme-color" content="#0f766e">
 </head>
 <body>
   <header class="site-header">
@@ -13,7 +16,7 @@
       <a class="brand" href="/">{{ .Site.Title }}</a>
       <nav class="nav">
         {{ range .Site.Menus.main }}
-          <a href="{{ .URL }}">{{ .Name }}</a>
+          <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} class="active"{{ end }}>{{ .Name }}</a>
         {{ end }}
       </nav>
     </div>
@@ -23,7 +26,7 @@
   </main>
   <footer class="site-footer">
     <div class="wrap">
-      <p>© {{ now.Year }} {{ .Site.Params.author }} · Powered by Hugo</p>
+      <p>© {{ now.Year }} {{ .Site.Params.author }} · <a href="/index.xml">RSS 订阅</a> · Powered by Hugo</p>
     </div>
   </footer>
 </body>
