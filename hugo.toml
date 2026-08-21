@@ -39,7 +39,7 @@ defaultContentLanguage = "zh"
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
-      unsafe = false
+      unsafe = true
   [markup.highlight]
     noClasses = true
     style = "monokai"

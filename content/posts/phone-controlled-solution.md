@@ -21,24 +21,59 @@ description = "把手机当成一个可被远程调度的执行节点：Worker �
 
 ## 1. 整体架构
 
-```
-┌─────────────┐       指令/状态(WebSocket)      ┌──────────────────┐
-│  控制面       │ ───────────────────────────►  │   Worker(调度层)   │
-│  (人/平台)    │ ◄───────────────────────────  │   设备管理/路由    │
-└─────────────┘                                └────────┬─────────┘
-                                                       │ 下发语义指令
-                                          ┌────────────▼───────────┐
-                                          │  被控手机 (Agent A1.0.0) │
-                                          │  ┌──────────────────┐    │
-                                          │  │ scrcpy-server     │    │ 视频流(H.264)
-                                          │  │ 屏幕采集+触控注入   │───┐ │
-                                          │  └──────────────────┘    │ │
-                                          │  ┌──────────────────┐    │ │
-                                          │  │ Qwen-UI-Agent 客户端│ ◄─┘ │
-                                          │  │ 看画面→规划→执行    │    │
-                                          │  └──────────────────┘    │
-                                          └─────────────────────────┘
-```
+<svg viewBox="0 0 680 400" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" style="display:block;margin:16px auto;max-width:680px">
+  <title>手机被控方案整体架构</title>
+  <desc>控制面通过WebSocket与Worker通信，Worker下发语义指令给被控手机Agent，Agent内含scrcpy-server和Qwen-UI-Agent客户端</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- 控制面 -->
+  <rect x="40" y="100" width="150" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="115" y="122" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#042C53">控制面</text>
+  <text x="115" y="142" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0C447C">（人 / 平台）</text>
+
+  <!-- Worker -->
+  <rect x="380" y="100" width="160" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="460" y="122" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#26215C">Worker（调度层）</text>
+  <text x="460" y="142" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#3C3489">设备管理 / 路由</text>
+
+  <!-- 双向箭头 -->
+  <line x1="190" y1="120" x2="375" y2="120" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="375" y1="136" x2="195" y2="136" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="285" y="110" text-anchor="middle" font-size="12" fill="#444441">指令 / 状态 (WebSocket)</text>
+
+  <!-- Worker -> 手机 -->
+  <line x1="460" y1="156" x2="460" y2="203" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="508" y="184" font-size="12" fill="#444441">下发语义指令</text>
+
+  <!-- 被控手机容器 -->
+  <rect x="260" y="210" width="340" height="170" rx="16" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+  <text x="430" y="234" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#4A1B0C">被控手机（Agent A1.0.0）</text>
+
+  <!-- scrcpy-server -->
+  <rect x="280" y="252" width="140" height="56" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="350" y="274" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#04342C">scrcpy-server</text>
+  <text x="350" y="294" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#085041">屏幕采集 + 触控注入</text>
+
+  <!-- Qwen-UI-Agent -->
+  <rect x="280" y="320" width="140" height="48" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="350" y="344" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#173404">Qwen-UI-Agent 客户端</text>
+  <text x="350" y="360" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#27500A">看画面 → 规划 → 执行</text>
+
+  <!-- 视频流输出 -->
+  <line x1="420" y1="280" x2="535" y2="280" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="480" y="270" text-anchor="middle" font-size="12" fill="#444441">视频流 (H.264)</text>
+
+  <!-- Agent 内部箭头 -->
+  <path d="M440 300 L440 310 L428 310" fill="none" stroke="#5F5E5A" stroke-width="1" marker-end="url(#a)"/>
+
+  <!-- 右侧标注 -->
+  <rect x="538" y="252" width="52" height="116" rx="6" fill="none" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text x="564" y="314" text-anchor="middle" font-size="11" fill="#888780" writing-mode="vertical-rl">控制面回显</text>
+</svg>
 
 控制面不直接碰屏幕像素，Worker 不直接连手机——中间全靠 Agent 这一个进程兜住。下面拆开讲四块。
 
